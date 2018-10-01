@@ -12,11 +12,12 @@ export let currentVersion = null;
 export const runApp = () => {
     let version = fs.readFileSync(path.join(appDir, 'version')).toLocaleString();
     console.log("Running the app:", version);
-    console.log(`open ${path.join(appDir, version, execPath())}`)
+    
     if(platform() === 'mac'){
-        
-        execSync(`open ${path.join(appDir, version, execPath())}`)
+        console.log(`open ${path.join(appDir, version, execPath())}`)
+        execSync(`open ${path.join(appDir, version, execPath()).replace(/ /gi, '\\ ')}`)
     }else{
+        console.log('running ' + path.join(appDir, version, execPath()))
         execFileSync(path.join(appDir, version, execPath()))
     }
 }
@@ -44,10 +45,12 @@ export const updateApp = async (mainWindow) => {
     const archiveFile = path.join(versionDir, 'app' + archiveType);
     
     await remakeDir(versionDir);
-
+    
     downloadApp(url, archiveFile, p => mainWindow.webContents.send('download-progress', p))
         .then(() => {
+            process.noAsar = true;
             unzip(archiveFile, versionDir).then(files => {
+                process.noAsar = false;
                 console.log('done!', files);
                 mainWindow.close();
                 currentVersion = latestVersion.tag_name;

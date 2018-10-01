@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "updater",
+    "productName": "Desktop App",
     "appId": "com.updater",
     "directories": {
       "output": "build"

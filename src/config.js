@@ -1,13 +1,13 @@
 const os = require('os');
 const path = require('path');
 let execs = {
-    windows: "OraOra.exe",
+    windows: "Desktop Application.exe",
     linux: "Desktop Application",
     mac: "Desktop Application.app"
 }
 
-export const repoOwner = 'OleksandrZhukovCT';
-export const repoName = 'ora';
+export const repoOwner = 'gdprapp';
+export const repoName = 'app';
 
 export const platform = () => {
     if (os.platform().toLowerCase().indexOf('darwin') != -1) {
@@ -18,7 +18,8 @@ export const platform = () => {
         return 'linux'
     }
 } 
-export const execPath = () => execs[platform()].replace(/ /gi, '\\ ')
+
+export const execPath = () => execs[platform()]
 
 export const archiveType = '.zip'
 
