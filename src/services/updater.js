@@ -1,9 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { execFileSync, execSync } from 'child_process'
+import { execFileSync, execFile, exec, execSync } from 'child_process'
 import { appDir, archiveType, platform, execPath } from '../config';
 import { compareVersions, downloadApp, remakeDir, unzip } from '../utils'
-
+import {
+    app
+} from 'electron'
 import { getReleases } from './github'
 
 export let latestVersion = null;
@@ -12,14 +14,15 @@ export let currentVersion = null;
 export const runApp = () => {
     let version = fs.readFileSync(path.join(appDir, 'version')).toLocaleString();
     console.log("Running the app:", version);
-    
-    if(platform() === 'mac'){
+
+    if (platform() === 'mac') {
         console.log(`open ${path.join(appDir, version, execPath())}`)
-        execSync(`open ${path.join(appDir, version, execPath()).replace(/ /gi, '\\ ')}`)
-    }else{
+        exec(`open ${path.join(appDir, version, execPath()).replace(/ /gi, '\\ ')}`);
+    } else {
         console.log('running ' + path.join(appDir, version, execPath()))
-        execFileSync(path.join(appDir, version, execPath()))
+        execFile(path.join(appDir, version, execPath()))
     }
+    if(app.dock) app.dock.hide()
 }
 
 export const updateApp = async (mainWindow) => {
@@ -36,17 +39,20 @@ export const updateApp = async (mainWindow) => {
             return name.indexOf('linux') != -1
         }
     });
-    
+
     console.log(assets)
     let url = assets[0].browser_download_url;
     console.log('download init from', url)
 
     const versionDir = path.join(appDir, latestVersion.tag_name);
     const archiveFile = path.join(versionDir, 'app' + archiveType);
-    
+
     await remakeDir(versionDir);
-    
-    downloadApp(url, archiveFile, p => mainWindow.webContents.send('download-progress', p))
+
+    downloadApp(url, archiveFile, p => {
+        mainWindow.setProgressBar(p.percent);
+        mainWindow.webContents.send('download-progress', p);
+    })
         .then(() => {
             process.noAsar = true;
             unzip(archiveFile, versionDir).then(files => {

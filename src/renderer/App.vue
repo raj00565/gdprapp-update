@@ -21,6 +21,7 @@ export default {
   },
   mounted() {
     ipcRenderer.on("download-progress", (_, progress) => {
+      console.log(progress)
       this.$nextTick(() => {
         this.p = Math.floor(progress.percent * 100);
       });
