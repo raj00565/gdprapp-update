@@ -14,15 +14,15 @@ export let currentVersion = null;
 export const runApp = () => {
     let version = fs.readFileSync(path.join(appDir, 'version')).toLocaleString();
     console.log("Running the app:", version);
-
+    if(app.dock) app.dock.hide()
     if (platform() === 'mac') {
         console.log(`open ${path.join(appDir, version, execPath())}`)
-        exec(`open ${path.join(appDir, version, execPath()).replace(/ /gi, '\\ ')}`);
+        execSync(`open ${path.join(appDir, version, execPath()).replace(/ /gi, '\\ ')}`);
     } else {
         console.log('running ' + path.join(appDir, version, execPath()))
-        execFile(path.join(appDir, version, execPath()))
+        execFileSync(path.join(appDir, version, execPath()))
     }
-    if(app.dock) app.dock.hide()
+    process.exit()
 }
 
 export const updateApp = async (mainWindow) => {
