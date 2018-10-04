@@ -1,9 +1,9 @@
 const os = require('os');
 const path = require('path');
 let execs = {
-    windows: "Desktop Application.exe",
-    linux: "Desktop Application",
-    mac: "Desktop Application.app"
+    windows: "GDPRapp.exe",
+    linux: "GDPRapp",
+    mac: "GDPRapp.app"
 }
 
 export const repoOwner = 'gdprapp';
